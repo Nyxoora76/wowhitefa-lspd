@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071019" />
+  <meta name="description" content="Centre opérationnel LSPD — WOWHITEFA" />
+  <title>WOWHITEFA — LSPD Operations Center</title>
+  <link rel="icon" href="assets/badge.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/badge.svg" alt="Insigne LSPD" class="brand-badge" />
+      <div>
+        <p class="eyebrow">WOWHITEFA</p>
+        <h1>LSPD</h1>
+        <span>Operations Center</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav"></nav>
+
+    <div class="sidebar-footer">
+      <div class="status-card">
+        <span class="status-dot"></span>
+        <div><b>Système opérationnel</b><small>Documentation interne</small></div>
+      </div>
+      <p>TO PROTECT AND TO SERVE</p>
+    </div>
+  </aside>
+
+  <main class="shell">
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+      <div class="search-wrap">
+        <span>⌕</span>
+        <input id="searchInput" type="search" placeholder="Rechercher une procédure, une formation, un code…" autocomplete="off" />
+        <kbd>CTRL K</kbd>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="top-actions">
+        <button class="chip" id="quickMiranda">Miranda</button>
+        <button class="profile">W<span>Agent</span></button>
+      </div>
+    </header>
+
+    <section id="app" class="content"></section>
+
+    <footer class="footer">
+      <span>WOWHITEFA • Los Santos Police Department</span>
+      <span>Documentation RP — version modernisée</span>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <div class="overlay" id="overlay"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
