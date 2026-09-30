@@ -1,34 +1,52 @@
-# WOWHITEFA — LSPD Operations Center
+# WOWHITEFA — LSPD Operations Center V2
 
-Site statique moderne pour la documentation interne du LSPD sur WOWHITEFA.
+Portail statique HTML / CSS / JavaScript prévu pour GitHub Pages.
 
-## Contenu
-- Tableau de bord
-- Manuel Rookie
-- Manuel LSPD
-- Procédures
-- FTO / Formations
+## Mise à jour de ton dépôt GitHub
+
+Remplace simplement ces fichiers dans ton dépôt `wowhitefa-lspd` :
+
+- `index.html`
+- `styles.css`
+- `app.js`
+- `assets/badge.svg` (facultatif si tu gardes déjà le même)
+
+Puis fais un commit. GitHub Pages republiera automatiquement le site.
+
+## Contenu V2
+
+- Guide Rookie complet
+- Tenues Rookie avec références homme/femme
+- Armurerie / PPA
+- Plan de Mission Row
+- Dispatch / Trello détaillé
+- Codes radio + signaux + alphabet
+- Fiche de calcul
+- Casier judiciaire
+- Équipement et tenues LSPD
+- Parc véhicules
+- Procédure pénale et médicale
+- Saisies
+- FTO : ASD, Mary, Dispatcher, Bravo
 - Droits Miranda
-- Divisions
-- Règlements
-- Recherche globale (Ctrl/Cmd + K)
-- Responsive mobile
+- Arrestation parfaite
+- Gestion prise d'otage
+- S.W.A.T. / Legal Service
+- Règlement LSPD
+- Emplacement règlement Staff Police
 
-## Lancer le site
-Ouvrez simplement `index.html` dans un navigateur, ou utilisez un serveur statique :
+## Liens internes WOWHITEFA
 
-```bash
-python -m http.server 8080
-```
+Au début de `app.js`, l'objet `CONFIG.links` permet d'ajouter les URL de votre :
 
-Puis ouvrez `http://localhost:8080`.
+- Dispatch / Trello
+- MDT
+- Fiche de calcul
+- Formulaire de saisie
+- Code pénal
 
-## Hébergement
-Le dossier peut être déposé tel quel sur GitHub Pages, Netlify, Vercel, Cloudflare Pages ou n'importe quel hébergement statique.
+Laisse une valeur vide (`''`) si le lien n'est pas encore prêt.
 
-## Personnalisation
-- `assets/badge.svg` : insigne du site
-- `styles.css` : couleurs et design
-- `app.js` : contenu et navigation
+## Note
 
-Le contenu reprend et modernise les informations publiques de l'ancien site LSPD FlashBackFA. Vérifiez les règles et procédures encore en vigueur avant de publier comme référentiel officiel du serveur.
+Le contenu a été restructuré et réécrit à partir du portail LSPD fourni comme référence. Les règles, grades, tenues, codes et procédures WOWHITEFA actuels doivent toujours être validés par la direction du serveur avant d'être considérés comme définitifs.

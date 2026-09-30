@@ -1,31 +1,45 @@
+const CONFIG = {
+  server: 'WOWHITEFA',
+  department: 'Los Santos Police Department',
+  version: '2.0',
+  links: {
+    dispatch: '',
+    mdt: '',
+    calculator: '',
+    seizureForm: '',
+    penalCode: ''
+  }
+};
+
 const SECTIONS = [
   { label:'Centre', items:[
     {id:'home',icon:'⌂',title:'Tableau de bord',desc:'Accueil opérationnel'}
   ]},
   { label:'Manuel Rookie', items:[
-    {id:'rookie',icon:'★',title:'Guide Rookie',desc:'Premiers pas'},
+    {id:'rookie',icon:'★',title:'Guide Rookie',desc:'Premiers pas & attitude'},
     {id:'rookie-uniform',icon:'♙',title:'Tenue Rookie',desc:'Patrouille & cérémonie'},
     {id:'armory',icon:'▣',title:'Armurerie',desc:'Équipement & PPA'},
     {id:'station',icon:'⌂',title:'Plan du poste',desc:'Mission Row'},
-    {id:'dispatch',icon:'⌁',title:'Dispatch',desc:'Organisation des unités'},
-    {id:'radio',icon:'⌁',title:'Radio',desc:'Codes & discipline'},
+    {id:'dispatch',icon:'⌁',title:'Dispatch',desc:'Trello & organisation'},
+    {id:'radio',icon:'⌁',title:'Radio',desc:'10-codes, signaux & alphabet'},
     {id:'calculator',icon:'#',title:'Peines & charges',desc:'Fiche de calcul'},
-    {id:'criminal-record',icon:'▤',title:'Casier judiciaire',desc:'Création & mise à jour'}
+    {id:'criminal-record',icon:'▤',title:'Casier judiciaire',desc:'Création & rapport'}
   ]},
   { label:'Manuel LSPD', items:[
     {id:'equipment',icon:'✦',title:'Équipement Police',desc:'Checklist de service'},
     {id:'uniforms',icon:'♜',title:'Tenues LSPD',desc:'Selon le grade'},
-    {id:'vehicles',icon:'▰',title:'Véhicules',desc:'Patrouille & spécialités'}
+    {id:'vehicles',icon:'▰',title:'Véhicules',desc:'Patrouille, bana & opérations'}
   ]},
   { label:'Procédures', items:[
-    {id:'criminal-procedure',icon:'§',title:'Procédure pénale',desc:'Arrestation & garde à vue'},
+    {id:'criminal-procedure',icon:'§',title:'Procédure pénale',desc:'Interpellation & garde à vue'},
     {id:'medical',icon:'✚',title:'Procédure médicale',desc:'Premiers secours'},
     {id:'seizure',icon:'▥',title:'Saisies LSPD',desc:'Traçabilité des objets'}
   ]},
   { label:'FTO / Formations', items:[
-    {id:'fto',icon:'▲',title:'Programme FTO',desc:'Formations internes'},
+    {id:'fto',icon:'▲',title:'Programme FTO',desc:'ASD, Mary, Dispatch, Bravo'},
     {id:'miranda',icon:'⚖',title:'Droits Miranda',desc:'Lecture & modalités'},
-    {id:'arrest',icon:'⛓',title:'Arrestation parfaite',desc:'Procédure complète'}
+    {id:'arrest',icon:'⛓',title:'Arrestation parfaite',desc:'Ordinaire & procureur'},
+    {id:'hostage',icon:'◇',title:"Prise d'otage",desc:'Sécurisation & négociation'}
   ]},
   { label:'Divisions', items:[
     {id:'swat',icon:'◆',title:'S.W.A.T.',desc:'Interventions à haut risque'},
@@ -33,97 +47,288 @@ const SECTIONS = [
   ]},
   { label:'Règlements', items:[
     {id:'rules',icon:'☷',title:'Règlement LSPD',desc:'Cadre interne'},
-    {id:'staff-rules',icon:'⌘',title:'Règlement Staff',desc:'Référentiel staff police'}
+    {id:'staff-rules',icon:'⌘',title:'Règlement Staff Police',desc:'Document intégré externe'}
   ]}
 ];
 
+const TEN_CODES = [
+  ['10-1','Mauvaise réception radio'],
+  ['10-2','Signal clair'],
+  ['10-3','Fin / arrêt de transmission'],
+  ['10-4','Bien reçu / affirmatif'],
+  ['10-5','Négatif'],
+  ['10-6','Occupé'],
+  ['10-7','Pause / indisponible temporairement'],
+  ['10-8','Prise de service / disponible'],
+  ['10-9','Répéter le dernier message'],
+  ['10-10','Fin de service'],
+  ['10-12','Présence de personnes pouvant entendre la radio'],
+  ['10-13','Conditions routières / information de circulation'],
+  ['10-14','Escorte ou convoi'],
+  ['10-15','Transport / détention d’un prisonnier'],
+  ['10-17','Ajout de carburant / arrêt station-service'],
+  ['10-19','En route vers une destination'],
+  ['10-20','Localisation / demande de position'],
+  ['10-22','Annuler le dernier call'],
+  ['10-23','Attente de dispatch'],
+  ['10-27','Sujet recherché / vérification individu'],
+  ['10-28','Vérification immatriculation'],
+  ['10-29','Vérification mandats'],
+  ['10-30','Bagarre'],
+  ['10-31','Coups de feu / tirs signalés'],
+  ['10-35','Demande de renfort'],
+  ['10-37','Cambriolage en cours'],
+  ['10-38','Contrôle routier'],
+  ['10-40','Braquage de supérette'],
+  ['10-41','Début de patrouille'],
+  ['10-42','Fin de patrouille'],
+  ['10-50','Accident de la route'],
+  ['10-51','Demande de dépanneuse'],
+  ['10-52','Demande EMS / ambulance'],
+  ['10-56','Refus d’obtempérer / course-poursuite'],
+  ['10-57','Délit de fuite'],
+  ['10-59','Vol de véhicule'],
+  ['10-60','Vente de drogue signalée'],
+  ['10-67','Incendie en cours'],
+  ['10-91','Braquage de banque'],
+  ['10-92','Braquage de bijouterie'],
+  ['10-93','Prise d’otage'],
+  ['10-97','Arrivé sur scène / position'],
+  ['10-98','Assignation terminée / disponible'],
+  ['11-99','Agent en danger — urgence absolue']
+];
+
+const SIGNAL_CODES = [
+  ['Code 1','Répondre à la radio.'],
+  ['Code 2','Intervention prioritaire sans sirène ; conduite conforme et prudente.'],
+  ['Code 3','Intervention urgente avec gyrophares et sirène ; prudence renforcée aux intersections.'],
+  ['Code 4','Situation stable, aucune assistance supplémentaire nécessaire.'],
+  ['Code 4 Adam','Situation stabilisée mais suspect encore en fuite ; unités déjà engagées.'],
+  ['Code 5','Zone sous surveillance ; les autres unités doivent éviter le secteur.'],
+  ['Code 5 Edward','Explosif signalé : recul d’environ 500 m et laisser la Bomb Squad intervenir.'],
+  ['Code 6','Arrivé sur scène / unité engagée dans une intervention ou investigation.'],
+  ['Code 6 Adam','Arrivé sur scène ; assistance d’unités proches potentiellement nécessaire.'],
+  ['Code 6 Charles','Suspect dangereux / mandat ; attendre ou confirmer l’assistance.'],
+  ['Code 7','Pause repas / indisponibilité courte, souvent remplacé par 10-7.'],
+  ['Code 20','Médias sur place / demander notification aux médias.'],
+  ['Code 37','Véhicule signalé volé.'],
+  ['Code 99','Officier en danger : besoin d’aide immédiate, équivalent urgence 11-99.'],
+  ['Code 100','Unités en position pour intercepter un suspect en fuite.'],
+  ['Code Robert','Demande de déploiement d’un fusil / d’une carabine sur scène.'],
+  ['Code Sam','Demande de déploiement Bean Bag.']
+];
+
+const RADIO_ALPHABET = ['A Adam','B Boy','C Charles','D David','E Edward','F Frank','G George','H Henry','I Ida','J John','K King','L Lincoln','M Mary','N Nora','O Ocean','P Paul','Q Queen','R Robert','S Sam','T Tango','U Union','V Victor','W William','X X-ray','Y Young','Z Zebra'];
+
 const PAGES = {
-  rookie:{title:'Guide Rookie',crumb:'Manuel Rookie',intro:'Les essentiels à maîtriser avant et pendant vos premières patrouilles au sein du Los Santos Police Department.',content:`
-    <h3>Votre rôle</h3><p>Un rookie apprend les bases du service : attitude, communication, équipement, procédures et fonctionnement des outils internes. Les conseils des formateurs et FTO restent prioritaires sur toute documentation statique.</p>
-    <div class="callout success"><b>Objectif</b><p>Être fiable, clair en radio, respectueux, attentif aux consignes et capable de demander de l'aide au bon moment.</p></div>
-    <h3>Avant de partir en patrouille</h3><ul><li>Revêtir la tenue Rookie conforme.</li><li>Prendre l'équipement autorisé à l'armurerie.</li><li>Mettre à jour son statut dans le Dispatch.</li><li>Rejoindre l'unité attribuée par le dispatcher.</li><li>Effectuer un contrôle rapide du véhicule et de son matériel.</li></ul>
-    <h3>Pendant la patrouille</h3><p>Restez professionnel, privilégiez l'apaisement et communiquez de façon concise. En cas de doute sur une procédure, demandez l'aide d'un agent formateur ou d'un supérieur.</p>`},
-  'rookie-uniform':{title:'Tenue Rookie',crumb:'Manuel Rookie',intro:'Référentiel de tenue pour les rookies, avec distinction patrouille, cérémonie et intervention.',content:`
-    <h3>Règles générales</h3><p>La tenue Rookie standard reste sobre et réglementaire. Les accessoires non autorisés doivent être évités en service.</p>
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Tenue</th><th>Usage</th><th>Statut</th></tr></thead><tbody><tr><td>Patrouille Rookie</td><td>Service courant</td><td>Obligatoire</td></tr><tr><td>Cérémonie</td><td>Cérémonies et événements officiels</td><td>Sur ordre</td></tr><tr><td>Intervention</td><td>Opération dédiée</td><td>Autorisé en opération</td></tr><tr><td>Gilet pare-balles</td><td>DEFCON / ordre hiérarchique</td><td>Conditionnel</td></tr></tbody></table></div>
-    <h3>Présentation</h3><p>Une tenue propre, cohérente et identifiable participe directement à l'image du département. Les détails de variations homme/femme peuvent être adaptés dans le vestiaire selon les presets maintenus par le serveur.</p>`},
-  armory:{title:'Armurerie',crumb:'Manuel Rookie',intro:'Accès à l’équipement de service et règles de restitution.',content:`
-    <h3>Prise de service</h3><p>Lors de votre arrivée au LSPD, l'armurerie donne accès à l'équipement autorisé pour votre grade et vos certifications.</p>
-    <div class="callout warning"><b>Fin de service</b><p>Tout équipement de service doit être rangé et restitué. Des contrôles peuvent être réalisés sur le contenu des coffres et l'équipement individuel.</p></div>
-    <h3>PPA</h3><p>Une fois la formation PPA validée, l'autorisation correspondante peut être ajoutée au badge et l'accès à l'arme réglementaire concernée est ouvert.</p>`},
-  station:{title:'Plan du poste',crumb:'Manuel Rookie',intro:'Repères essentiels du commissariat de Mission Row.',content:`
-    <h3>Étage inférieur</h3><p>Cellules, garages principal et secondaire, salles d'interrogatoire, stockage des saisies et espaces dédiés à certaines unités opérationnelles.</p>
-    <h3>Rez-de-chaussée</h3><p>Accueil, entrée principale, vestiaires, salle de réunion, cafétéria, bureaux, armurerie et stand de tir.</p>
-    <h3>Étage supérieur</h3><p>Dispatch, bureaux de commandement, espaces administratifs, bureaux des divisions d'enquête et accès héliport.</p>
-    <div class="callout"><b>Conseil Rookie</b><p>Apprenez rapidement les accès cellules, garages, armurerie, interrogatoires et dispatch : ce sont les zones que vous utiliserez le plus souvent.</p></div>`},
-  dispatch:{title:'Dispatch',crumb:'Manuel Rookie',intro:'Organisation des effectifs, création des unités et mise à jour du statut de patrouille.',content:`
-    <h3>Rôle du Dispatch</h3><p>Le dispatch répartit les unités et donne une vue claire des effectifs disponibles, en service ou engagés dans une procédure.</p>
-    <h3>Carte agent</h3><p>Le format recommandé conserve le matricule, l'identité de l'agent et les informations utiles au service. La carte doit rester dans la colonne correspondant à votre statut.</p>
-    <div class="quote"><b>Format de patrouille</b><br>Véhicule + matricule du plus haut gradé | Membres de la patrouille | Véhicule utilisé</div>
-    <h3>Bonnes pratiques</h3><ul><li>Signaler sa prise de service.</li><li>Attendre l'affectation si un dispatcher est actif.</li><li>Mettre l'unité « en procédure » lorsque nécessaire.</li><li>Garder les informations de carte à jour pendant toute la patrouille.</li></ul>`},
-  radio:{title:'Radio LSPD',crumb:'Manuel Rookie / LSPD',intro:'Une radio propre est une radio courte, précise et utile.',content:`
-    <h3>Discipline radio</h3><p>Annoncez votre matricule ou votre unité, réfléchissez avant d'émettre et évitez tout échange sans utilité opérationnelle. Le but est de préserver la fréquence pour les informations importantes.</p>
-    <h3>Alphabet opérationnel</h3><div class="tag-row">${['A Adam','B Boy','C Charles','D David','E Edward','F Frank','G George','H Henry','I Ida','J John','K King','L Lincoln','M Mary','N Nora','O Ocean','P Paul','Q Queen','R Robert','S Sam','T Tango','U Union','V Victor','W William','X X-ray','Y Young','Z Zebra'].map(x=>`<span class="tag">${x}</span>`).join('')}</div>
-    <h3>Signaux de priorité</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Code</th><th>Signification</th></tr></thead><tbody><tr><td>Code 1</td><td>Répondre à la radio.</td></tr><tr><td>Code 2</td><td>Déplacement prioritaire sans sirène, dans le respect du code de la route.</td></tr><tr><td>Code 3</td><td>Urgence avec avertisseurs lumineux et sonores, en conservant une conduite sécurisée.</td></tr></tbody></table></div>`},
-  calculator:{title:'Peines & charges',crumb:'Manuel Rookie',intro:'Méthode de préparation d’une fiche de calcul pour une procédure pénale.',content:`
-    <h3>Informations de base</h3><p>Commencez par l'identité du prévenu et les informations de l'agent en charge. Sélectionnez ensuite chaque chef d'inculpation réellement retenu et vérifiez les quantités applicables.</p>
-    <div class="callout"><b>Traçabilité</b><p>La fiche doit rester lisible et permettre à un autre agent ou au procureur de comprendre rapidement le calcul effectué.</p></div>
-    <h3>Contrôle final</h3><ul><li>Vérifier l'identité.</li><li>Écarter les charges non établies.</li><li>Appliquer la bonne quantité par charge.</li><li>Conserver la preuve ou capture demandée par la procédure interne.</li></ul>`},
-  'criminal-record':{title:'Casier judiciaire',crumb:'Manuel Rookie',intro:'Créer, vérifier et mettre à jour un casier dans le référentiel prévu.',content:`
-    <h3>Vérification</h3><p>Avant toute création, recherchez l'individu dans l'espace dédié afin d'éviter les doublons.</p>
-    <div class="timeline"><div class="step"><span class="step-num">1</span><div><h4>Rechercher</h4><p>Vérifiez si un casier existe déjà.</p></div></div><div class="step"><span class="step-num">2</span><div><h4>Créer si nécessaire</h4><p>Utilisez le modèle officiel et renseignez l'identité avec soin.</p></div></div><div class="step"><span class="step-num">3</span><div><h4>Mettre à jour</h4><p>Ajoutez les nouvelles procédures avec leurs charges et informations pertinentes.</p></div></div></div>`},
-  equipment:{title:'Équipement Police',crumb:'Manuel LSPD',intro:'Checklist de prise de service et rappel des équipements de base.',content:`
-    <h3>Checklist</h3><ul><li>Tenue réglementaire.</li><li>Arme autorisée selon certification/PPA.</li><li>Taser.</li><li>Matraque.</li><li>Menottes.</li><li>Gilet pare-balles.</li><li>Lampe torche et radar selon besoin.</li></ul>
-    <div class="callout success"><b>Avant de sortir</b><p>Vérifiez votre matériel avant de vous déclarer disponible. En fin de service, rangez l'ensemble de l'équipement récupéré.</p></div>
-    <h3>Radio</h3><p>La radio reste l'outil central de coordination. Gardez-la accessible et limitez les transmissions à l'opérationnel.</p>`},
-  uniforms:{title:'Tenues LSPD',crumb:'Manuel LSPD',intro:'Principes de présentation des agents selon leur grade.',content:`
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Grade</th><th>Présentation générale</th></tr></thead><tbody><tr><td>Rookie</td><td>Manches longues et cravate, présentation stricte.</td></tr><tr><td>Officer I & II</td><td>Manches longues sans cravate ou manches courtes.</td></tr><tr><td>Officer III / Supervisors</td><td>Tenue d'officier avec insignes/galons correspondants.</td></tr><tr><td>Lieutenant</td><td>Tenue de commandement / tenue civile autorisée selon contexte.</td></tr><tr><td>Captain</td><td>Tenue de commandement avec insignes de grade / tenue civile selon contexte.</td></tr></tbody></table></div>
-    <h3>Principe</h3><p>La tenue choisie doit correspondre à la mission, au grade et aux consignes du commandement.</p>`},
-  vehicles:{title:'Véhicules LSPD',crumb:'Manuel LSPD',intro:'Organisation des véhicules de patrouille, spécialisés, banalisés et d’opération.',content:`
-    <h3>Patrouille</h3><div class="tag-row">${['Voiture Cadet','Voiture Officer','Vapid Scout','Everon 4x4','Mesa','Cruiser','Moto','Polmav'].map(x=>`<span class="tag">${x}</span>`).join('')}</div>
-    <h3>Banalisés</h3><p>Plusieurs berlines, SUV et véhicules non marqués peuvent être attribués aux grades ou divisions autorisés. L'utilisation doit rester cohérente avec l'affectation en cours.</p>
-    <h3>Opérations spéciales</h3><div class="tag-row">${['Command Truck','Fourgon blindé','Bus pénitentiaire','SWAT 4x4','Riot','Insurgent','BCAT','Anti-émeute','NightShark'].map(x=>`<span class="tag">${x}</span>`).join('')}</div>
-    <div class="callout warning"><b>Retour de patrouille</b><p>Le véhicule doit être rangé à son emplacement, en état correct et avec un niveau de carburant suffisant.</p></div>`},
-  'criminal-procedure':{title:'Procédure pénale',crumb:'Procédures',intro:'Cadre opérationnel d’une interpellation, d’une arrestation et d’une garde à vue.',content:`
-    <div class="callout danger"><b>Principe</b><p>Une arrestation doit être fondée sur des faits ou éléments suffisants. Toute personne appréhendée reste sous la protection des agents et doit être traitée avec dignité.</p></div>
-    <h3>Déroulement standard</h3><div class="timeline"><div class="step"><span class="step-num">1</span><div><h4>Constatation</h4><p>Flagrant délit, témoignage ou autre élément utile.</p></div></div><div class="step"><span class="step-num">2</span><div><h4>Interpellation</h4><p>Contrôlez la situation et adaptez le niveau d'intervention au risque.</p></div></div><div class="step"><span class="step-num">3</span><div><h4>Palpation & transport</h4><p>Sécurisez la personne avant le transfert. Orientez vers l'hôpital si nécessaire.</p></div></div><div class="step"><span class="step-num">4</span><div><h4>Arrivée au poste</h4><p>Identité, droits Miranda, fouille, scellés et vérification des dossiers.</p></div></div><div class="step"><span class="step-num">5</span><div><h4>Garde à vue</h4><p>Appliquez les droits demandés, calculez les charges et contactez le procureur lorsque la procédure l'exige.</p></div></div></div>
-    <h3>Types d'infraction</h3><div class="tag-row"><span class="tag">Contravention</span><span class="tag">Délit mineur</span><span class="tag">Délit majeur</span><span class="tag">Crime</span></div>
-    <p>Le niveau de peine appliqué dépend des faits, de la coopération et des validations requises. Utilisez toujours le code pénal et les outils à jour du serveur.</p>`},
-  medical:{title:'Procédure médicale',crumb:'Procédures',intro:'Réflexes de premiers secours avant la prise en charge par les services médicaux.',content:`
-    <h3>Les 4 étapes</h3><div class="timeline"><div class="step"><span class="step-num">1</span><div><h4>Sécuriser</h4><p>Évaluez les dangers et établissez un périmètre si nécessaire.</p></div></div><div class="step"><span class="step-num">2</span><div><h4>Évaluer</h4><p>Vérifiez la conscience, la respiration et l'état général de la victime.</p></div></div><div class="step"><span class="step-num">3</span><div><h4>Alerter</h4><p>Transmettez localisation, nature du problème, nombre de victimes et risques éventuels.</p></div></div><div class="step"><span class="step-num">4</span><div><h4>Secourir</h4><p>Effectuez uniquement les gestes adaptés, calmement, jusqu'à l'arrivée des secours.</p></div></div></div>
-    <h3>Victime inconsciente mais qui respire</h3><p>Libérez les voies aériennes, placez la victime en position latérale de sécurité et surveillez sa respiration jusqu'à la prise en charge médicale.</p>
-    <div class="callout warning"><b>RP médical</b><p>Cette fiche est un guide de jeu de rôle. Pour toute situation réelle, suivez les recommandations officielles des services d'urgence de votre pays.</p></div>`},
-  seizure:{title:'Saisies LSPD',crumb:'Procédures',intro:'Référentiel de traçabilité des objets confisqués et saisis.',content:`
-    <h3>Objectif</h3><p>Chaque saisie doit être compréhensible et retraçable : qui a saisi, sur qui, quoi, quand, dans quelle procédure et où l'objet a été déposé.</p>
-    <h3>Checklist</h3><ul><li>Identifier le suspect et l'agent.</li><li>Décrire l'objet avec une quantité précise.</li><li>Relier la saisie au dossier ou à l'arrestation.</li><li>Conserver les éléments de preuve utiles.</li><li>Déposer l'objet dans l'emplacement prévu.</li></ul>`},
-  fto:{title:'Programme FTO',crumb:'FTO / Formations',intro:'Centre des formations internes, spécialisations et accompagnement des agents.',content:`
-    <h3>Mission des FTO</h3><p>Les Field Training Officers assurent la montée en compétence des rookies et des agents souhaitant acquérir une spécialité. Ils travaillent avec les responsables de formation et les divisions concernées.</p>
-    <h3>Formations mises en avant</h3><div class="cards"><div class="card" style="--accent:#68b9ff"><div class="card-icon">✈</div><h4>ASD</h4><p>Soutien aérien, reconnaissance et assistance aux unités au sol.</p></div><div class="card" style="--accent:#e0b55c"><div class="card-icon">◉</div><h4>Mary / Moto</h4><p>Renfort mobile, escorte et interventions routières adaptées.</p></div><div class="card" style="--accent:#55d99f"><div class="card-icon">⌁</div><h4>Dispatcher</h4><p>Répartition des effectifs, discipline radio et suivi des unités.</p></div><div class="card" style="--accent:#70d0f3"><div class="card-icon">≋</div><h4>Bravo</h4><p>Patrouilles et interventions nautiques, avec règles de sécurité dédiées.</p></div></div>
-    <h3>Standard de formation</h3><p>Une certification doit valider à la fois les connaissances, les comportements de sécurité et la capacité à communiquer avec le reste des unités.</p>`},
-  miranda:{title:'Droits Miranda',crumb:'FTO / Formations',intro:'Lecture des droits lors d’une arrestation et conduite à tenir pendant la garde à vue.',content:`
-    <div class="callout warning"><b>À retenir</b><p>Dans le cadre RP du serveur, les droits doivent être annoncés rapidement après l'arrestation et avant la mise en cellule, dans un environnement permettant une lecture sûre et compréhensible.</p></div>
-    <h3>Texte de lecture</h3><div class="quote" id="mirandaText"><button class="copy-btn" data-copy="mirandaText">Copier</button>Madame / Monsieur, vous êtes placé(e) en état d'arrestation par le Los Santos Police Department. Vous avez le droit de garder le silence. Si vous renoncez à ce droit, tout ce que vous direz pourra être utilisé contre vous devant une cour de justice. Vous avez le droit à un avocat et à sa présence lors d'un interrogatoire. Si vous n'en avez pas les moyens, un avocat pourra vous être fourni. Vous pouvez également demander des soins médicaux. Vous pouvez décider à tout moment d'exercer ces droits et de ne répondre à aucune question. Avez-vous compris les droits qui viennent de vous être lus ? Souhaitez-vous faire valoir l'un de ces droits ?</div>
-    <h3>Procédure de lecture</h3><div class="timeline"><div class="step"><span class="step-num">1</span><div><h4>Après l'arrestation</h4><p>Placez la personne en sécurité et annoncez les chefs provisoires si la procédure le demande.</p></div></div><div class="step"><span class="step-num">2</span><div><h4>Lecture</h4><p>Récitez clairement les droits avant l'arrivée en cellule, idéalement le plus tôt possible.</p></div></div><div class="step"><span class="step-num">3</span><div><h4>Confirmation</h4><p>Demandez explicitement si les droits ont été compris et si un droit doit être exercé.</p></div></div><div class="step"><span class="step-num">4</span><div><h4>Refus de répondre</h4><p>Le référentiel historique du serveur prévoit jusqu'à trois lectures avant de consigner l'absence de confirmation.</p></div></div></div>
-    <h3>Modalités RP</h3><ul><li>Fenêtre opérationnelle indiquée par l'ancien référentiel : 15 minutes après l'arrestation.</li><li>La sécurité de l'agent et du suspect peut justifier un léger décalage.</li><li>Si l'état du suspect empêche une compréhension correcte, adaptez la procédure et priorisez la prise en charge nécessaire.</li></ul>
-    <div class="callout"><b>Contexte</b><p>Le principe est inspiré de l'arrêt américain Miranda v. Arizona (1966). Le contenu ci-dessus suit surtout les règles RP historiques de WOWHITEFA/FlashBackFA : gardez-le synchronisé avec votre règlement actuel.</p></div>`},
-  arrest:{title:'Arrestation parfaite',crumb:'FTO / Formations',intro:'Séquence simple pour sécuriser une arrestation et préparer la suite judiciaire.',content:`
-    <h3>Procédure ordinaire</h3><ol><li>Constater les faits.</li><li>Interpeller le suspect et contrôler la situation.</li><li>Effectuer une palpation de sécurité.</li><li>Transférer le suspect vers le poste ou l'hôpital si nécessaire.</li><li>Lire les droits Miranda dans un lieu adapté.</li><li>Effectuer la fouille selon la procédure interne.</li><li>Vérifier l'identité et le casier.</li><li>Placer en garde à vue et appliquer les droits demandés.</li><li>Calculer les charges et la peine.</li><li>Finaliser l'amende / GAV selon les règles en vigueur.</li></ol>
-    <h3>Avec procureur</h3><p>Préparez le dossier et le calcul des charges, puis contactez le procureur. En cas d'indisponibilité, appliquez la solution prévue par le règlement du serveur (convocation, bracelet électronique ou autre dispositif à jour).</p>`},
-  swat:{title:'Special Weapons and Tactics',crumb:'Divisions',intro:'Unité spécialisée dans les interventions à haut risque et les opérations nécessitant un dispositif renforcé.',content:`
-    <h3>Missions</h3><ul><li>Libération d'otages.</li><li>Rétablissement de l'ordre lors de situations majeures.</li><li>Interventions à haut risque contre des sujets barricadés ou recherchés.</li><li>Appui lors de mandats ou perquisitions sensibles.</li><li>Sécurisation d'événements et de personnalités.</li><li>Négociation lors des scènes nécessitant une expertise dédiée.</li></ul>
-    <div class="callout danger"><b>Déploiement</b><p>Le SWAT intervient lorsque le niveau de risque justifie des agents spécialement formés, des équipements renforcés et une coordination stricte.</p></div>`},
-  legal:{title:'Legal Service',crumb:'Divisions',intro:'Division chargée du suivi des plaintes, des recherches d’informations et d’enquêtes complémentaires.',content:`
-    <h3>Missions principales</h3><ul><li>Analyser et suivre les dépôts de plainte.</li><li>Prendre contact avec les personnes concernées.</li><li>Réaliser des vérifications et enquêtes terrain.</li><li>Conduire des interrogatoires dans le respect des procédures.</li><li>Constituer des dossiers d'enquête propres et exploitables.</li></ul>
-    <h3>Méthode</h3><p>Chaque enquête doit reposer sur des éléments identifiables, une chronologie claire et une séparation nette entre faits constatés, témoignages et hypothèses.</p>`},
-  rules:{title:'Règlement LSPD',crumb:'Règlements',intro:'Principes internes de comportement, hiérarchie et tenue du fonctionnaire de police.',content:`
-    <h3>Règles générales</h3><ul><li>Respect de la hiérarchie administrative.</li><li>Égalité de traitement entre fonctionnaires.</li><li>Évolution fondée sur les compétences et les critères prévus par le service.</li><li>Application des protocoles, procédures et textes en vigueur.</li></ul>
-    <h3>Comportement</h3><p>Un agent représente le LSPD par son attitude. Courtoisie, sérieux, maîtrise de soi et respect entre collègues sont attendus en service comme dans les échanges avec la population.</p>
-    <h3>Tenue</h3><p>L'uniforme doit être propre, adapté à la mission et porté correctement. Les modifications ou accessoires non conformes doivent être validés selon la chaîne hiérarchique.</p>
-    <div class="callout warning"><b>Version serveur</b><p>Cette interface présente une synthèse modernisée de l'ancien règlement. Pour les sanctions et articles détaillés, le texte officiel actuel du serveur doit rester la référence finale.</p></div>`},
-  'staff-rules':{title:'Règlement Staff Police',crumb:'Règlements',intro:'Espace prévu pour les règles spécifiques aux membres staff exerçant au sein du LSPD.',content:`
-    <h3>Référentiel</h3><p>L'ancien site intégrait ce règlement depuis un document externe. Cette page est prête à recevoir le contenu actualisé directement dans la nouvelle interface.</p>
-    <div class="empty">Ajoutez ici la version actuelle du règlement Staff Police pour qu'elle soit intégrée au même design que le reste du site.</div>`}
+  rookie:{title:'Guide Rookie',crumb:'Manuel Rookie',intro:'Le socle du métier : comportement, préparation, patrouille et respect de la chaîne de commandement.',content:()=>`
+    <h3>Le rôle de l’agent</h3>
+    <p>Le LSPD assure l’application des lois de Los Santos, interpelle les auteurs d’infractions et porte assistance à la population. Le pouvoir confié à un agent doit toujours être utilisé avec mesure, professionnalisme et dans le cadre des procédures du serveur.</p>
+    <div class="callout success"><b>Devise du service</b><p>To protect and to serve — protéger, assister et maintenir l’ordre sans rechercher inutilement l’affrontement.</p></div>
+    <h3>Attitude attendue</h3>
+    <ul><li>Rester respectueux même face à une personne agressive.</li><li>Chercher à apaiser les tensions avant de les faire monter.</li><li>Écouter les consignes des FTO et des supérieurs.</li><li>Demander de l’aide lorsqu’une procédure n’est pas maîtrisée.</li><li>Garder une présentation et une communication professionnelles.</li></ul>
+    <h3>Composition d’une patrouille</h3>
+    <p>La patrouille standard se fait à deux. La patrouille solo reste une exception lorsque aucune autre solution n’est possible. À trois, l’organisation de bord doit être claire : le passager avant gère notamment les avertisseurs / mégaphone et le passager arrière peut prendre la radio.</p>
+    <h3>Avant de quitter le poste</h3>
+    <div class="timeline">
+      ${step(1,'Tenue','Revêtir la tenue correspondant au grade et à la mission.')}
+      ${step(2,'Équipement','Contrôler radio, menottes, taser, protections et matériel autorisé.')}
+      ${step(3,'Dispatch','Passer au bon statut et attendre l’affectation si un dispatcher est actif.')}
+      ${step(4,'Véhicule','Contrôler l’état, le carburant et le matériel embarqué.')}
+    </div>
+    <h3>Véhicule en fin de service</h3><p>Le véhicule doit être rendu en bon état, correctement stationné et avec un niveau de carburant suffisant. Le matériel embarqué doit être remis en ordre.</p>`},
+
+  'rookie-uniform':{title:'Tenue Rookie',crumb:'Manuel Rookie',intro:'Références des tenues de patrouille et de cérémonie Rookie.',content:()=>`
+    <h3>Tenues préfaites du vestiaire</h3>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Preset</th><th>Usage</th></tr></thead><tbody>
+      <tr><td>Cadet / Officier / Haut gradé</td><td>❌ Ne pas utiliser comme tenue Rookie standard.</td></tr>
+      <tr><td>Intervention</td><td>✅ Seulement lors d’une opération adaptée.</td></tr>
+      <tr><td>Gilet intervention</td><td>✅ Opération / intervention.</td></tr>
+      <tr><td>Gilet pare-balles</td><td>✅ En DEFCON ou sur ordre hiérarchique.</td></tr>
+    </tbody></table></div>
+    <h3>Patrouille — Homme</h3>${uniformTable([['T-shirt','312'],['Veste','837'],['Mains','12'],['Collier','0'],['Pantalon','326'],['Chaussures','25'],['Sac','206'],['Variation','0'],['Chapeau','NON']])}
+    <h3>Cérémonie — Homme</h3>${uniformTable([['T-shirt','255'],['Veste','812'],['Mains','82'],['Collier','350'],['Pantalon','192'],['Chaussures','25'],['Sac','183'],['Variation','0'],['Chapeau','138']])}
+    <h3>Patrouille — Femme</h3>${uniformTable([['T-shirt','381'],['Veste','913'],['Mains','14'],['Collier','0'],['Pantalon','358'],['Chaussures','25'],['Sac','140'],['Variation','0'],['Chapeau','NON']])}
+    <h3>Cérémonie — Femme</h3>${uniformTable([['T-shirt','368'],['Veste','890'],['Mains','86'],['Collier','219'],['Pantalon','34'],['Chaussures','25'],['Sac','16'],['Variation','0'],['Chapeau','209']])}
+    <div class="callout warning"><b>WOWHITEFA</b><p>Ces références reprennent le référentiel utilisé sur le site source. Si les vêtements ont changé sur WOWHITEFA, envoie-moi les nouveaux numéros et je remplace la table en quelques minutes.</p></div>`},
+
+  armory:{title:'Armurerie',crumb:'Manuel Rookie',intro:'Prise, contrôle et restitution du matériel de service.',content:()=>`
+    <h3>Accès</h3><p>À votre arrivée au LSPD, l’armurerie permet de récupérer le matériel autorisé pour votre grade et vos qualifications. Les accès supplémentaires sont liés aux formations obtenues.</p>
+    <h3>Règles essentielles</h3><ul><li>Prendre uniquement le matériel nécessaire et autorisé.</li><li>Ne pas conserver l’équipement de service hors cadre prévu.</li><li>Rendre le matériel à la fin du service.</li><li>Maintenir les coffres et espaces de stockage propres.</li><li>Accepter les contrôles de matériel prévus par la hiérarchie.</li></ul>
+    <div class="callout warning"><b>PPA</b><p>Après validation du PPA, le badge peut être mis à jour et l’accès au pistolet de combat est autorisé selon les règles internes.</p></div>`},
+
+  station:{title:'Plan du poste',crumb:'Manuel Rookie',intro:'Repères rapides du commissariat de Mission Row.',content:()=>`
+    <div class="floor-grid">
+      ${floorCard('Étage inférieur','Cellules','Garage principal','Garage secondaire','Salles d’interrogatoire','Coffre des saisies','Salle S.W.A.T.','Traffic Division / Metro')}
+      ${floorCard('Rez-de-chaussée','Accueil','Entrée principale','Vestiaire','Salle de réunion','Cafétéria','Bureaux','Armurerie','Stand de tir')}
+      ${floorCard('Étage supérieur','Dispatch','Bureau Deputy-Chief','Bureau Capitaine','Bureau Lieutenant','Bureaux LSPD / RRPP','Affaires internes','Recrutement','Divisions d’enquête','Accès héliport')}
+    </div>
+    <div class="callout"><b>À connaître en priorité</b><p>Cellules, garages, armurerie, salle d’interrogatoire et dispatch : ce sont les zones les plus utilisées pendant une procédure ordinaire.</p></div>`},
+
+  dispatch:{title:'Dispatch',crumb:'Manuel Rookie',intro:'Prise de service, Trello, affectation des unités et statuts opérationnels.',content:()=>`
+    <h3>Prise de service</h3>
+    <ol><li>Vérifier tenue et équipement.</li><li>Déplacer sa carte dans <strong>En attente de Dispatch</strong>.</li><li>Annoncer sa prise de service et son statut en radio.</li><li>Attendre l’affectation si un dispatcher est présent.</li></ol>
+    <div class="callout warning"><b>Rookie</b><p>Un Rookie ne part pas seul en patrouille. En l’absence d’autre option, la gestion se fait avec la hiérarchie / les agents habilités selon le règlement en vigueur.</p></div>
+    <h3>Fin de service</h3><p>La carte de patrouille passe en <strong>10-10</strong>. Il n’est pas nécessaire de surcharger la radio pour cette action. Le matériel doit être rendu à l’armurerie selon les règles du service.</p>
+    <h3>Carte agent</h3><div class="quote"><b>Format conseillé</b><br><code>Matricule | Prénom Nom | Numéro de téléphone</code></div>
+    <p>Ajoutez ensuite les étiquettes correspondant au grade et, si nécessaire, aux divisions. Une seule carte doit représenter l’agent et rester à jour.</p>
+    <h3>Colonnes / statuts importants</h3>${simpleTable(['Statut','Utilisation'],[
+      ['En attente de Dispatch','Agent en service, disponible pour être affecté.'],
+      ['En service','Agent affecté à une unité / patrouille active.'],
+      ['Activité','Zone utilisée lorsque les agents doivent mettre leur statut à jour.'],
+      ['En procédure','Unité occupée par une procédure et temporairement moins disponible.'],
+      ['10-10','Fin de service.']
+    ])}
+    <h3>Création d’une unité</h3><div class="quote"><b>Modèle</b><br><code>🚔 Modèle du véhicule + matricule du plus haut gradé | Membres de la patrouille | Véhicule utilisé</code></div>
+    <p>Si deux agents ont le même grade, le matricule du conducteur peut être utilisé comme référence de l’unité. Pensez à garder la carte agent en <strong>En service</strong> pendant toute la patrouille.</p>
+    ${externalLink('dispatch','Ouvrir le Dispatch WOWHITEFA','Ajoute l’URL de votre Trello / Dispatch dans CONFIG.links.dispatch pour activer ce bouton.')}`},
+
+  radio:{title:'Radio LSPD',crumb:'Manuel Rookie / LSPD',intro:'10-codes, signaux d’urgence, alphabet opérationnel et discipline radio.',content:()=>`
+    <h3>Discipline radio</h3><p>La fréquence sert aux informations utiles au service. Annoncez votre matricule ou votre unité, préparez votre message avant d’émettre et restez clair, bref et précis. Les conversations privées doivent passer par un autre moyen.</p>
+    <div class="callout success"><b>Format d’un call</b><p><strong>Unité → code / information → localisation → besoin éventuel.</strong> Exemple : « Adam 10, 10-19 vers le dernier 10-91. »</p></div>
+    <h3>10-codes</h3>${codeTable(TEN_CODES)}
+    <h3>Signaux LSPD</h3>${codeTable(SIGNAL_CODES)}
+    <h3>Alphabet radio</h3><div class="tag-row alphabet-grid">${RADIO_ALPHABET.map(x=>`<span class="tag">${x}</span>`).join('')}</div>
+    <div class="callout warning"><b>Référentiel WOWHITEFA</b><p>La liste ci-dessus reprend la base de travail du site fourni et les codes opérationnels associés. Si WOWHITEFA a modifié un code, donne-moi votre tableau officiel et je le remplace à l’identique.</p></div>`},
+
+  calculator:{title:'Peines & charges',crumb:'Manuel Rookie',intro:'Méthode de remplissage de la fiche de calcul et contrôle des charges.',content:()=>`
+    <h3>Étape 1 — Identité</h3><p>Renseignez le <strong>NOM Prénom du prévenu</strong> ainsi que le <strong>matricule + NOM Prénom de l’agent</strong>. Les champs automatiques, comme la date, ne doivent pas être modifiés inutilement.</p>
+    <h3>Étape 2 — Chefs d’inculpation</h3><p>Sélectionnez uniquement les charges réellement établies. La quantité est généralement 1, sauf lorsqu’un même fait concerne plusieurs victimes ou plusieurs occurrences et que le code pénal prévoit une quantité distincte.</p>
+    <h3>Contrôle final</h3><ul><li>Comparer chaque charge avec les faits constatés.</li><li>Éviter les doublons.</li><li>Vérifier amendes, temps de GAV et seuils nécessitant un procureur.</li><li>Conserver la capture / preuve demandée par la procédure interne.</li></ul>
+    ${externalLink('calculator','Ouvrir la fiche de calcul WOWHITEFA','Ajoute le lien de votre feuille de calcul dans CONFIG.links.calculator.')}`},
+
+  'criminal-record':{title:'Casier judiciaire',crumb:'Manuel Rookie',intro:'Vérifier, créer puis alimenter proprement le dossier judiciaire d’un individu.',content:()=>`
+    <div class="timeline">
+      ${step(1,'Procédure judiciaire','Ouvrir l’espace / salon dédié aux casiers judiciaires.')}
+      ${step(2,'Vérifier l’existence','Rechercher l’individu afin d’éviter la création d’un doublon.')}
+      ${step(3,'Créer si absent','Récupérer le modèle épinglé, le copier puis renseigner toutes les informations demandées.')}
+      ${step(4,'Créer / ouvrir le fil','Le fil sert à regrouper les rapports d’arrestation du même individu.')}
+      ${step(5,'Rapport d’arrestation','Copier le modèle officiel et renseigner faits, charges, preuves et suites de la procédure.')}
+    </div>
+    <div class="callout"><b>Bonne pratique</b><p>Une personne déjà enregistrée ne doit pas recevoir un deuxième casier : utilisez le fil existant et ajoutez la nouvelle procédure.</p></div>
+    ${externalLink('mdt','Ouvrir le MDT WOWHITEFA','Ajoute l’URL du MDT dans CONFIG.links.mdt pour activer ce raccourci.')}`},
+
+  equipment:{title:'Équipement Police',crumb:'Manuel LSPD',intro:'Checklist à effectuer avant de se déclarer opérationnel.',content:()=>`
+    <h3>Avant la prise de service</h3><ul><li>Tenue réglementaire et adaptée.</li><li>Pistolet de combat si PPA validé.</li><li>Taser.</li><li>Matraque.</li><li>Menottes.</li><li>Gilet pare-balles.</li><li>Lampe torche — conseillée.</li><li>Radar — conseillé selon la mission.</li></ul>
+    <div class="callout success"><b>Fin de service</b><p>Tout matériel récupéré au début du service doit être remis à sa place. Ne laissez pas d’équipement de police hors du cadre prévu.</p></div>
+    <h3>La radio</h3><p>La radio reste l’un des outils les plus importants de l’agent. Le boîtier principal assure la liaison tandis que le micro déporté facilite une utilisation rapide sans perdre le contrôle de la scène.</p>
+    <h3>Matériel embarqué</h3><p>L’ordinateur de bord permet notamment de consulter les identités, immatriculations, permis et informations sur les unités actives selon les outils du serveur.</p>`},
+
+  uniforms:{title:'Tenues LSPD',crumb:'Manuel LSPD',intro:'Règles de présentation selon le grade.',content:()=>`
+    ${simpleTable(['Grade','Tenue / signes distinctifs'],[
+      ['Rookie','Manches longues avec cravate ; pas d’accessoires non autorisés.'],
+      ['Officier I & II','Manches longues sans cravate ou manches courtes.'],
+      ['Officier III','Tenue Officier + galons.'],
+      ['Senior Lead Officer','Manches longues / courtes + galons.'],
+      ['Sergeant I & II','Manches longues / courtes + galons.'],
+      ['Lieutenant','Tenue de commandement + barrettes ; tenue civile selon contexte.'],
+      ['Capitaine','Tenue de commandement + étoiles ; tenue civile selon contexte.']
+    ])}
+    <div class="callout"><b>Présentation</b><p>La tenue doit être propre, cohérente avec la mission et représentative du département. Les modifications inhabituelles doivent être validées par la hiérarchie.</p></div>`},
+
+  vehicles:{title:'Véhicules',crumb:'Manuel LSPD',intro:'Référentiel des véhicules de patrouille, banalisés et d’opérations spéciales.',content:()=>`
+    <h3>Patrouille / service courant</h3>${vehicleGrid(['Vélo','Voiture Cadet','Voiture Officier','Vapid Scout','Everon 4x4','Mesa','Vapide','Moto'])}
+    <h3>Intervention</h3>${vehicleGrid(['Gresley','Vapid S5','Moto d’intervention','Vapide Cruiser','Polmav','LS350'])}
+    <h3>Banalisés</h3>${vehicleGrid(['Mesa Bana','Crown x2','4x4','Buffalo','Vapid S5 Bana','Oracle x3','Stanier','Speedo x4','Schafter x5','Baller Bana','Vapid Scout Bana','Vapid Stanier x6','Buffalo S x7','Torrence Bana','Revolter Bana','STX Bana','Vigero Bana','Caracara Bana','Rumpo Bana','Schafter LWB','Vapide DOA','Contender DOA'])}
+    <h3>Convoi / opérations spéciales</h3>${vehicleGrid(['Camion Command','Fourgon blindé','Bus pénitencier','4x4 S.W.A.T.','Riot S.W.A.T.','Insurgent','Fourgon blindé BCAT','Anti-émeute','NightShark blindé'])}
+    <div class="callout warning"><b>Accès véhicule</b><p>L’autorisation réelle dépend toujours du grade, de la division, de la formation et des règles WOWHITEFA en vigueur.</p></div>`},
+
+  'criminal-procedure':{title:'Procédure pénale',crumb:'Procédures',intro:'Cadre général : interpellation, transfert, Miranda, fouille, GAV et contact justice.',content:()=>`
+    <h3>Principes</h3><p>Une arrestation doit reposer sur des faits et non sur une décision arbitraire. Une personne appréhendée reste sous la protection des agents. Les contrôles, palpations, fouilles et placements en cellule doivent être effectués dans le cadre prévu par le serveur.</p>
+    <div class="callout warning"><b>Fouille</b><p>Le référentiel source prévoit une fouille par un agent du même sexe ou, si nécessaire, par le personnel médical. Appliquez la règle WOWHITEFA actuellement en vigueur.</p></div>
+    <h3>Déroulement général</h3><div class="timeline">
+      ${step(1,'Constatation','Témoignage, éléments disponibles ou flagrant délit.')}
+      ${step(2,'Interpellation','Poursuite ou interpellation directe ; adapter la réponse au niveau de danger.')}
+      ${step(3,'Arrestation','Palpation, menottage et sécurisation du suspect.')}
+      ${step(4,'Transfert','10-15 vers l’office ; passage par l’hôpital si l’état le justifie.')}
+      ${step(5,'Arrivée au poste','Identité, Miranda dans un lieu sûr, fouille, photo / traçabilité et mise sous scellés.')}
+      ${step(6,'MDT & charges','Vérification du dossier et préparation de la peine encourue.')}
+      ${step(7,'Garde à vue','Accès aux droits demandés, saisies, calcul des peines et suites judiciaires.')}
+    </div>
+    <h3>Procureur</h3><p>Pour les crimes ou accumulations de délits atteignant les seuils définis par le serveur, contactez le procureur. Si aucun procureur n’est disponible, appliquez la procédure WOWHITEFA prévue (convocation / bracelet électronique / libération selon le cas).</p>
+    <h3>Vérification d’identité</h3><p>L’identité doit être vérifiée via les moyens prévus par le MDT et la procédure interne. En cas de doute ou de refus persistant, faites remonter la situation à la hiérarchie plutôt que d’improviser.</p>`},
+
+  medical:{title:'Procédure médicale',crumb:'Procédures',intro:'Réflexes de premiers secours avant la prise en charge par les EMS.',content:()=>`
+    <h3>Les 4 étapes</h3><div class="timeline">
+      ${step(1,'Sécuriser','Évaluer les dangers : circulation, incendie, électricité, armes, environnement. Ne pas se mettre soi-même en danger.')}
+      ${step(2,'Évaluer la victime','Se présenter, rassurer, vérifier conscience et respiration et rechercher les blessures visibles.')}
+      ${step(3,'Alerter','Prévenir les secours avec une localisation claire, le nombre de victimes et les risques présents.')}
+      ${step(4,'Secourir','Réaliser uniquement les gestes maîtrisés en attendant les EMS, sans aggraver l’état de la victime.')}
+    </div>
+    <h3>Victime inconsciente</h3><p>Contrôlez la respiration. Si elle respire et que la situation le permet, placez-la en position latérale de sécurité et surveillez-la. Si elle ne respire pas normalement, lancez immédiatement l’alerte et appliquez les gestes de réanimation correspondant à votre formation RP.</p>
+    <h3>Saignement</h3><p>Protégez-vous, identifiez l’origine du saignement et appliquez les gestes de compression / premiers secours appris en formation. Faites intervenir les EMS dès que possible.</p>
+    <div class="callout danger"><b>Priorité</b><p>Une scène non sécurisée ne doit pas être abordée sans précaution. La sécurité des agents, des secours et des civils passe avant la rapidité d’intervention.</p></div>`},
+
+  seizure:{title:'Saisies LSPD',crumb:'Procédures',intro:'Traçabilité des objets confisqués et transmission au stockage.',content:()=>`
+    <h3>Règle générale</h3><p>Tout objet confisqué pendant une procédure doit être identifiable et relié à l’affaire concernée : agent, suspect, date, motif, quantité et destination du scellé.</p>
+    <h3>Checklist</h3><ul><li>Photographier / consigner les objets selon la procédure.</li><li>Éviter de mélanger les saisies de plusieurs dossiers.</li><li>Reporter les quantités et la provenance avec précision.</li><li>Déposer les objets dans l’espace de saisie prévu.</li><li>Compléter le formulaire ou le rapport demandé.</li></ul>
+    ${externalLink('seizureForm','Ouvrir le formulaire de saisie WOWHITEFA','Le site d’origine utilisait un formulaire intégré. Ajoute votre nouveau lien dans CONFIG.links.seizureForm.')}`},
+
+  fto:{title:'Programme FTO',crumb:'FTO / Formations',intro:'Formations internes et qualifications spécialisées du LSPD.',content:()=>`
+    <h3>Rôle de la division formation</h3><p>Les FTO assurent les formations internes et accompagnent les agents dans l’apprentissage des spécialités. Ils travaillent notamment avec les encadrants Rookie et gèrent les qualifications nécessaires aux postes spécialisés.</p>
+    <h3>ASD — Air Support Division</h3><div class="mini-grid">${miniCard('Prérequis','Officier II minimum, maîtrise de l’hélicoptère, attention et communication radio.')} ${miniCard('Missions','Reconnaissance aérienne, sécurisation de l’espace aérien, suivi d’un suspect, assistance à un aéronef en difficulté.')}</div>
+    <h3>Mary / Moto</h3><p>Le référentiel source présente une routière haute performance. Les règles importantes sont la patrouille à plusieurs, l’interdiction de partir sur une fusillade en moto, le maintien sur les axes routiers et le rôle de renfort / escorte.</p>
+    <h3>Dispatcher</h3><p>Le dispatcher répartit les effectifs sur les différents districts, maintient une radio propre et s’assure que les cartes du Dispatch restent à jour. Il doit limiter le flood, exiger des calls précis et corriger les statuts incohérents.</p>
+    <h3>Bravo / Maritime</h3><p>La formation Bravo donne accès au pilotage des moyens nautiques prévus. Les patrouilles se font au minimum à deux ; le pilote doit être qualifié et le port du gilet de sauvetage est obligatoire selon la mission.</p>
+    <div class="callout"><b>Formations WOWHITEFA</b><p>Les grades requis et disponibilités peuvent évoluer. Le tableau officiel WOWHITEFA doit rester prioritaire sur cette présentation.</p></div>`},
+
+  miranda:{title:'Droits Miranda',crumb:'FTO / Formations',intro:'Lecture des droits, confirmation de compréhension et délais de procédure.',content:()=>`
+    <h3>Quand les lire ?</h3><p>Lorsqu’un individu est placé en état d’arrestation / garde à vue, ses droits doivent être annoncés dans le délai prévu par la procédure. La lecture se fait dans un endroit suffisamment sécurisé pour l’agent et le suspect.</p>
+    <div class="quote" id="mirandaText"><button class="copy-btn" data-copy="mirandaText">COPIER</button><b>Texte opérationnel WOWHITEFA</b><br><br>« Madame / Monsieur [Nom], vous êtes placé(e) en état d’arrestation par le Los Santos Police Department pour [motif]. Vous avez le droit de garder le silence. Si vous renoncez à ce droit, vos déclarations pourront être utilisées dans le cadre de la procédure. Vous avez le droit à l’assistance d’un avocat et pouvez demander sa présence lors d’un interrogatoire. Si nécessaire, un avocat pourra vous être attribué selon les règles en vigueur. Vous pouvez également demander une assistance médicale. Vous pouvez exercer ces droits à tout moment pendant votre garde à vue. Avez-vous compris les droits qui viennent de vous être présentés et souhaitez-vous exercer l’un d’eux ? »</div>
+    <h3>Procédure</h3><ul><li>Lire les droits à voix haute.</li><li>Demander une confirmation de compréhension.</li><li>En cas d’absence de confirmation, répéter la lecture selon la procédure interne.</li><li>Consigner l’heure et les droits demandés.</li><li>Permettre l’accès aux droits applicables pendant la garde à vue.</li></ul>
+    <h3>Délai</h3><div class="callout warning"><b>15 minutes</b><p>Le référentiel source prévoit une lecture dans les 15 minutes suivant l’arrestation, sous réserve de la sécurité de la scène. Vérifiez que cette règle correspond toujours au cadre WOWHITEFA actuel.</p></div>`},
+
+  arrest:{title:'Arrestation parfaite',crumb:'FTO / Formations',intro:'Séquence complète d’une procédure ordinaire ou avec intervention du procureur.',content:()=>`
+    <h3>Procédure ordinaire</h3><div class="timeline">
+      ${step(1,'Constatation','Établir les faits / flagrant délit.')}
+      ${step(2,'Interpellation','Poursuite ou interpellation directe ; sécuriser la situation.')}
+      ${step(3,'Palpation','Vérifier les menaces immédiates sans confondre palpation et fouille complète.')}
+      ${step(4,'10-15','Transport du suspect vers le poste / hôpital si nécessaire.')}
+      ${step(5,'Miranda','Lire les droits dans un lieu sûr et dans le délai applicable.')}
+      ${step(6,'Fouille & identification','Fouille, photo / preuve, identité et casier judiciaire.')}
+      ${step(7,'GAV','Cellule, EMS / nourriture si demandés et applicables, saisies et calcul des peines.')}
+      ${step(8,'Clôture','Amende, GAV ou autre suite prévue par le code pénal.')}
+    </div>
+    <h3>Avec procureur</h3><p>Préparez les charges et le dossier sans exécuter prématurément une sanction relevant du jugement. Contactez la liaison procureur : jugement immédiat si disponible ; sinon, appliquez la procédure de convocation / bracelet électronique prévue par le serveur.</p>
+    <div class="callout success"><b>Réflexe</b><p>Une procédure propre est chronologique, documentée et explicable par un autre agent sans avoir à deviner ce qui s’est passé.</p></div>`},
+
+  hostage:{title:"Gestion d'une prise d'otage",crumb:'FTO / Formations',intro:'Sécuriser la zone, établir le contact et négocier progressivement.',content:()=>`
+    <div class="callout danger"><b>Avant tout contact</b><p>Le périmètre doit être sécurisé. Un négociateur ne doit pas s’exposer seul : il est accompagné et protégé pendant le contact.</p></div>
+    <h3>Phase 1 — Prise de contact</h3><p>Établissez un canal de communication : contact direct, téléphone ou radio selon la situation. Présentez-vous et cherchez d’abord à stabiliser l’échange.</p>
+    <h3>Phase 2 — État des otages</h3><p>Demandez à voir les otages ou à leur parler pour vérifier leur état de santé. Toute demande de soins doit être traitée comme une priorité de sécurité.</p>
+    <h3>Phase 3 — Négociation</h3><p>Avancez progressivement. Lorsqu’un service est demandé (nourriture, véhicule, etc.), cherchez une contrepartie cohérente, par exemple la libération d’un otage. Ne promettez pas ce que vous ne pouvez pas fournir.</p>
+    <h3>Phase 4 — Coordination</h3><p>Le négociateur transmet les informations utiles au commandement et aux unités d’intervention. La radio opérationnelle doit rester lisible et ne pas perturber le contact.</p>
+    <div class="callout"><b>Priorité</b><p>La vie des otages et des intervenants prime sur la précipitation. Les choix tactiques restent sous l’autorité du commandement / des unités spécialisées.</p></div>`},
+
+  swat:{title:'S.W.A.T.',crumb:'Divisions',intro:'Unité spécialisée dans les interventions à haut risque.',content:()=>`
+    <h3>Mission</h3><p>Le Special Weapons And Tactics intervient lorsque le niveau de risque dépasse les capacités d’une patrouille ordinaire. Ses membres reçoivent une formation spécifique à l’intervention, aux armes et aux situations complexes.</p>
+    <h3>Domaines d’intervention</h3><ul><li>Libération d’otages.</li><li>Maintien / rétablissement de l’ordre lors d’événements majeurs.</li><li>Interventions sur suspects barricadés ou fortement armés.</li><li>Appui sur mandats d’arrêt ou perquisitions à haut risque.</li><li>Renfort de sécurité lors d’événements sensibles.</li><li>Protection de personnalités / membres du gouvernement selon les missions.</li></ul>
+    <h3>Négociation</h3><p>Le SWAT peut inclure des fonctions de négociation et de soutien psychologique. Sur une prise d’otage ou un braquage, la coordination avec les unités spécialisées prime sur les initiatives individuelles.</p>`},
+
+  legal:{title:'Legal Service',crumb:'Divisions',intro:'Division d’enquête chargée du suivi des plaintes et dossiers qui nécessitent des investigations.',content:()=>`
+    <h3>Missions</h3><ul><li>Rechercher des informations à partir d’un dépôt de plainte.</li><li>Contacter les personnes concernées.</li><li>Mener des vérifications / enquêtes terrain.</li><li>Réaliser des interrogatoires.</li><li>Monter des dossiers d’enquête structurés.</li></ul>
+    <h3>Méthode</h3><p>Séparez clairement les faits constatés, témoignages, éléments matériels et hypothèses. Un dossier doit pouvoir être repris par un autre enquêteur ou présenté à la justice sans explications orales indispensables.</p>`},
+
+  rules:{title:'Règlement LSPD',crumb:'Règlements',intro:'Cadre interne : hiérarchie, comportement, organisation et présentation.',content:()=>`
+    <h3>Titre I — Règles générales</h3><ul><li>Tous les fonctionnaires sont soumis à la hiérarchie du LSPD.</li><li>L’égalité de traitement s’applique entre les agents.</li><li>L’évolution doit reposer sur les compétences et critères internes.</li></ul>
+    <h3>Titre II — Organisation</h3><p>Le département s’organise autour du bureau du Chief, du personnel, des opérations, du recrutement, de la communication, de l’administration et des responsables de divisions / départements. La chaîne de commandement doit être respectée dans les décisions de service.</p>
+    <h3>Titre III — Comportement</h3><ul><li>Comportement exemplaire et digne.</li><li>Courtoisie envers les citoyens et les collègues.</li><li>Sérieux devant la population et la hiérarchie.</li><li>Respect des protocoles, procédures et textes en vigueur.</li><li>Neutralité attendue dans l’exercice de la fonction.</li></ul>
+    <h3>Tenue</h3><p>L’uniforme doit être propre, correctement porté et adapté à la mission. En civil, l’identification doit respecter les règles du service.</p>
+    <div class="callout warning"><b>Important</b><p>Cette page est une version restructurée pour le portail WOWHITEFA. Pour les sanctions, exceptions et articles détaillés, le règlement officiel WOWHITEFA doit rester la référence.</p></div>`},
+
+  'staff-rules':{title:'Règlement Staff Police',crumb:'Règlements',intro:'Emplacement réservé au document Staff Police.',content:()=>`
+    <h3>Document externe</h3><p>Sur le site fourni, cette page ne contient pas le texte directement : le règlement Staff Police est chargé depuis un document intégré (iframe). Le contenu n’est donc pas récupérable proprement depuis la page publique.</p>
+    <div class="empty"><b>À compléter</b><br><br>Envoie-moi le PDF, Google Doc ou le texte du règlement Staff Police WOWHITEFA et je l’intégrerai directement ici avec la même mise en page que le reste du portail.</div>`}
 };
+
+function step(n,title,text){return `<div class="step"><span class="step-num">${n}</span><div><h4>${title}</h4><p>${text}</p></div></div>`}
+function uniformTable(rows){return simpleTable(['Élément','Référence'],rows)}
+function simpleTable(headers, rows){return `<div class="table-wrap"><table class="data-table"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
+function codeTable(rows){return `<div class="table-wrap code-table-wrap"><table class="data-table code-table"><thead><tr><th>Code</th><th>Signification</th></tr></thead><tbody>${rows.map(([a,b])=>`<tr><td><strong>${a}</strong></td><td>${b}</td></tr>`).join('')}</tbody></table></div>`}
+function miniCard(title,text){return `<div class="mini-card"><span>${title}</span><p>${text}</p></div>`}
+function floorCard(title,...items){return `<div class="floor-card"><span>${title}</span><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`}
+function vehicleGrid(items){return `<div class="vehicle-grid">${items.map(v=>`<div class="vehicle-pill"><span>▰</span>${v}</div>`).join('')}</div>`}
+function externalLink(key,label,fallback){const href=CONFIG.links[key];return href?`<a class="external-btn" href="${href}" target="_blank" rel="noopener">${label} ↗</a>`:`<div class="callout"><b>${label}</b><p>${fallback}</p></div>`}
 
 const flatItems = SECTIONS.flatMap(s=>s.items.map(i=>({...i,section:s.label})));
 const app = document.getElementById('app');
@@ -147,32 +352,33 @@ function routeTo(id){
 
 function home(){
   const categoryCards = [
-    ['rookie','★','Manuel Rookie','Bases, tenue, dispatch, radio et outils du quotidien.','#4ba9f2'],
-    ['criminal-procedure','§','Procédures','Arrestations, GAV, médical et saisies.','#65d9a4'],
-    ['fto','▲','FTO & Formations','Certifications et spécialisations internes.','#e4bd60'],
-    ['swat','◆','Divisions','Unités spécialisées et missions dédiées.','#ff7378'],
-    ['rules','☷','Règlements','Cadre interne et standards du département.','#9d8cff'],
-    ['miranda','⚖','Droits Miranda','Lecture rapide et procédure associée.','#50c8e8']
+    ['rookie','★','Manuel Rookie','Les bases complètes pour démarrer proprement.','#4ba9f2'],
+    ['radio','⌁','Codes radio','10-codes, signaux, alphabet et discipline.','#50c8e8'],
+    ['criminal-procedure','§','Procédures','Interpellation, GAV, médical et saisies.','#65d9a4'],
+    ['fto','▲','FTO & Formations','ASD, Mary, Dispatcher, Bravo et procédures.','#e4bd60'],
+    ['swat','◆','Divisions','S.W.A.T., Legal Service et missions spécialisées.','#ff7378'],
+    ['rules','☷','Règlements','Cadre interne et standards du département.','#9d8cff']
   ];
   app.innerHTML = `
     <section class="hero">
-      <div class="hero-copy"><span class="kicker">Los Santos Police Department</span><h2>OPS <em>CENTER</em></h2><p>Le centre de documentation opérationnelle du LSPD sur <strong>WOWHITEFA</strong>. Retrouvez rapidement procédures, formations, règles et fiches réflexes dans une interface pensée pour être utilisée en patrouille.</p><div class="hero-actions"><button class="btn btn-primary" data-route="rookie">Commencer le guide Rookie</button><button class="btn btn-secondary" data-route="miranda">Ouvrir les droits Miranda</button></div></div>
+      <div class="hero-copy"><span class="kicker">${CONFIG.department}</span><h2>OPS <em>CENTER</em></h2><p>Le portail opérationnel du LSPD sur <strong>${CONFIG.server}</strong>. Cette V2 reprend la structure et les informations utiles du site de référence en les réorganisant pour une consultation rapide en service.</p><div class="hero-actions"><button class="btn btn-primary" data-route="rookie">Commencer le guide Rookie</button><button class="btn btn-secondary" data-route="radio">Ouvrir les codes radio</button></div></div>
       <img src="assets/badge.svg" class="hero-badge" alt="" />
     </section>
-    <section class="stats"><div class="stat"><span>Modules</span><strong>${flatItems.length-1}</strong></div><div class="stat"><span>Formations mises en avant</span><strong>4</strong></div><div class="stat"><span>Divisions</span><strong>2+</strong></div><div class="stat"><span>Accès</span><strong>24/7</strong></div></section>
-    <div class="section-head"><div><h3>Accès rapide</h3><p>Les ressources les plus utilisées pendant une prise de service.</p></div></div>
+    <section class="stats"><div class="stat"><span>Modules</span><strong>${flatItems.length-1}</strong></div><div class="stat"><span>Codes radio</span><strong>${TEN_CODES.length + SIGNAL_CODES.length}</strong></div><div class="stat"><span>Formations FTO</span><strong>4+</strong></div><div class="stat"><span>Version</span><strong>V${CONFIG.version}</strong></div></section>
+    <div class="section-head"><div><h3>Accès rapide</h3><p>Les ressources les plus utiles pendant une prise de service.</p></div></div>
     <section class="cards">${categoryCards.map(c=>`<article class="card" data-route="${c[0]}" style="--accent:${c[4]}"><div class="card-icon">${c[1]}</div><h4>${c[2]}</h4><p>${c[3]}</p><span class="card-meta">OUVRIR →</span></article>`).join('')}</section>
-    <div class="section-head"><div><h3>Fiches réflexes</h3><p>Actions à garder sous la main.</p></div></div>
-    <section class="cards"><article class="card" data-route="radio"><div class="card-icon">⌁</div><h4>Discipline radio</h4><p>Codes de priorité, alphabet et règles d'émission.</p><span class="card-meta">RADIO</span></article><article class="card" data-route="arrest"><div class="card-icon">⛓</div><h4>Arrestation</h4><p>La séquence complète, du constat des faits à la GAV.</p><span class="card-meta">PROCÉDURE</span></article><article class="card" data-route="equipment"><div class="card-icon">✦</div><h4>Prise de service</h4><p>Checklist de tenue et d'équipement avant la patrouille.</p><span class="card-meta">CHECKLIST</span></article></section>`;
+    <div class="section-head"><div><h3>Fiches réflexes</h3><p>Les actions à garder sous la main en intervention.</p></div></div>
+    <section class="cards"><article class="card" data-route="miranda"><div class="card-icon">⚖</div><h4>Droits Miranda</h4><p>Texte prêt à copier et procédure de lecture.</p><span class="card-meta">DROITS</span></article><article class="card" data-route="arrest"><div class="card-icon">⛓</div><h4>Arrestation</h4><p>La séquence du flagrant délit jusqu’à la clôture.</p><span class="card-meta">PROCÉDURE</span></article><article class="card" data-route="dispatch"><div class="card-icon">⌁</div><h4>Dispatch</h4><p>Prise de service, carte agent et statut de patrouille.</p><span class="card-meta">TRELLO</span></article></section>`;
 }
 
 function page(id){
   const p=PAGES[id]; if(!p){home();return;}
   const current = flatItems.find(i=>i.id===id);
-  const siblings = flatItems.filter(i=>i.section===current?.section && i.id!==id).slice(0,5);
+  const siblings = flatItems.filter(i=>i.section===current?.section && i.id!==id).slice(0,6);
+  const content = typeof p.content === 'function' ? p.content() : p.content;
   app.innerHTML=`
-    <div class="page-header"><div><div class="crumb">${p.crumb}</div><h2>${p.title}</h2><p>${p.intro}</p></div><div class="tag-row"><span class="tag">WOWHITEFA</span><span class="tag">LSPD</span></div></div>
-    <div class="page-grid"><article class="article">${p.content}</article><aside class="side-column"><div class="aside-card"><h4>Dans cette section</h4><div class="aside-list">${siblings.map(s=>`<button data-route="${s.id}">${s.title}<br><small>${s.desc}</small></button>`).join('')||'<span style="color:#62798a;font-size:11px">Aucun module lié.</span>'}</div></div><div class="aside-card"><h4>Accès rapide</h4><div class="aside-list"><button data-route="miranda">⚖ Droits Miranda</button><button data-route="radio">⌁ Radio LSPD</button><button data-route="criminal-procedure">§ Procédure pénale</button></div></div></aside></div>`;
+    <div class="page-header"><div><div class="crumb">${p.crumb}</div><h2>${p.title}</h2><p>${p.intro}</p></div><div class="tag-row"><span class="tag">${CONFIG.server}</span><span class="tag">LSPD</span><span class="tag">V${CONFIG.version}</span></div></div>
+    <div class="page-grid"><article class="article">${content}</article><aside class="side-column"><div class="aside-card"><h4>Dans cette section</h4><div class="aside-list">${siblings.map(s=>`<button data-route="${s.id}">${s.title}<br><small>${s.desc}</small></button>`).join('')||'<span style="color:#62798a;font-size:11px">Aucun module lié.</span>'}</div></div><div class="aside-card"><h4>Accès rapide</h4><div class="aside-list"><button data-route="radio">⌁ Radio & codes</button><button data-route="miranda">⚖ Droits Miranda</button><button data-route="criminal-procedure">§ Procédure pénale</button><button data-route="arrest">⛓ Arrestation parfaite</button></div></div></aside></div>`;
 }
 
 function render(id){
@@ -191,10 +397,10 @@ function bindDynamic(){
 }
 
 function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1900)}
-
+function pageSearchText(id){const p=PAGES[id]; if(!p) return ''; const raw=typeof p.content==='function'?p.content():p.content; return `${p.title} ${p.intro} ${raw.replace(/<[^>]+>/g,' ')}`.toLowerCase()}
 function doSearch(q){
   q=q.trim().toLowerCase(); if(!q){searchResults.classList.remove('show');return;}
-  const hits=flatItems.filter(i=>`${i.title} ${i.desc} ${i.section}`.toLowerCase().includes(q)).slice(0,8);
+  const hits=flatItems.filter(i=>`${i.title} ${i.desc} ${i.section} ${pageSearchText(i.id)}`.toLowerCase().includes(q)).slice(0,10);
   searchResults.innerHTML=hits.length?hits.map(i=>`<div class="search-result" data-route="${i.id}"><b>${i.title}</b><small>${i.section} · ${i.desc}</small></div>`).join(''):`<div class="search-result"><small>Aucun résultat pour « ${q} »</small></div>`;
   searchResults.classList.add('show');
   searchResults.querySelectorAll('[data-route]').forEach(el=>el.onclick=()=>{routeTo(el.dataset.route);searchInput.value='';searchResults.classList.remove('show')});
